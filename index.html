@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>СВОЙ СТИЛЬ — Напольные покрытия</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Шапка -->
+<header class="header">
+    <div class="logo">СВОЙ СТИЛЬ</div>
+    <nav class="nav">
+      <a href="#catalog">Каталог</a>
+      <a href="#contacts">Контакты</a>
+      <!-- НОВОЕ: Кнопка корзины -->
+      <button id="cart-btn" class="cart-btn">
+        🛒 Корзина (<span id="cart-count">0</span>)
+      </button>
+    </nav>
+  </header>
+
+  <!-- Главный блок -->
+  <main>
+    <section class="hero">
+      <h1>Напольные покрытия для вашего дома</h1>
+      <p>Ламинат, кварцвинил, пробка и паркет — от лучших производителей.</p>
+    </section>
+
+    <!-- Каталог -->
+    <section id="catalog" class="catalog">
+      <h2>Наш каталог</h2>
+      
+      <!-- Фильтры -->
+      <div class="filters">
+        <button class="filter-btn active" data-category="all">Все</button>
+        <button class="filter-btn" data-category="laminate">Ламинат</button>
+        <button class="filter-btn" data-category="vinyl">Кварцвинил</button>
+        <button class="filter-btn" data-category="cork">Пробка</button>
+        <button class="filter-btn" data-category="parquet">Паркет</button>
+      </div>
+
+      <!-- Сетка товаров -->
+      <div class="products-grid" id="products-grid">
+        <!-- Карточки будут добавляться через JS -->
+      </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contacts" class="contacts">
+      <h2>Наши контакты</h2>
+      <p>📞 Телефон: +7 (XXX) XXX-XX-XX</p>
+      <p>📍 Адрес: г. Ваш город, ул. Ваша улица, д. X</p>
+      <p>✉️ Email: info@svoy-stil.ru</p>
+    </section>
+  </main>
+
+  <!-- Футер -->
+  <footer class="footer">
+    <p>© 2026 Магазин «СВОЙ СТИЛЬ». Все права защищены.</p>
+  </footer>
+
+  <!-- НОВОЕ: Модальное окно корзины -->
+  <div class="cart-modal" id="cart-modal">
+    <div class="cart-content">
+      <div class="cart-header">
+        <h2>Ваша корзина</h2>
+        <button id="close-cart" class="close-btn">&times;</button>
+      </div>
+      <div id="cart-items" class="cart-items">
+        <!-- Товары будут здесь -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          Итого: <span id="cart-total-price">0</span> ₽
+        </div>
+        <button class="checkout-btn">Оформить заказ</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
