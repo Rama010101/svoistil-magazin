@@ -231,6 +231,13 @@ function renderProducts() {
         addToCart(product);
       });
     }
+  // Делаем карточку кликабельной (переход на страницу товара)
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', (e) => {
+      // Если кликнули по кнопке "В корзину" — не переходим
+      if (e.target.classList.contains('product-btn')) return;
+      window.location.href = `product.html?id=${product.id}`;
+    });
 
     grid.appendChild(card);
   });
@@ -335,4 +342,62 @@ if (checkoutForm) {
     // Для реального магазина здесь нужно отправить orderText на сервер или в Telegram
     // alert("Заказ оформлен! (В реальности здесь будет отправка на сервер)");
   });
+}
+// ==========================================
+// СТРАНИЦА ТОВАРА (product.html)
+// ==========================================
+const productDetailsContainer = document.getElementById('product-details');
+
+if (productDetailsContainer) {
+  // Получаем ID товара из адресной строки (например, product.html?id=2)
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = parseInt(urlParams.get('id'));
+
+  // Ищем товар в массиве products по ID
+  const product = products.find(p => p.id === productId);
+
+  if (product) {
+    // Меняем заголовок страницы
+    document.title = `${product.name} — СВОЙ СТИЛЬ`;
+
+    // Формируем HTML
+    productDetailsContainer.innerHTML = `
+      <div class="product-page-image">
+        <img src="${product.image}" alt="${product.name}" onerror="this.src='https://placehold.co/400x300/e8dccb/8B5A2B?text=Фото'">
+      </div>
+      <div class="product-page-info">
+        <div class="category-label">${getCategoryName(product.category)}</div>
+        <h1>${product.name}</h1>
+        <div class="price">${product.price.toLocaleString('ru-RU')} ₽ / м²</div>
+        <p class="description">${product.description}</p>
+        <button class="product-btn" id="add-to-cart-detail" ${product.inStock ? '' : 'disabled'}>
+          ${product.inStock ? 'Добавить в корзину' : 'Нет в наличии'}
+        </button>
+      </div>
+    `;
+
+    // Обработчик для кнопки "Добавить в корзину" на странице товара
+    const addBtn = document.getElementById('add-to-cart-detail');
+    if (addBtn && product.inStock) {
+      addBtn.addEventListener('click', () => {
+        addToCart(product);
+        // Небольшое уведомление, что добавлено
+        addBtn.textContent = 'Добавлено! ✓';
+        setTimeout(() => addBtn.textContent = 'Добавить в корзину', 1500);
+      });
+    }
+  } else {
+    productDetailsContainer.innerHTML = '<p>Товар не найден. <a href="index.html">Вернуться в каталог</a></p>';
+  }
+}
+
+// Вспомогательная функция для красивого названия категории
+function getCategoryName(category) {
+  const names = {
+    'laminate': 'Ламинат',
+    'vinyl': 'Кварцвинил',
+    'cork': 'Пробка',
+    'parquet': 'Паркет'
+  };
+  return names[category] || 'Напольное покрытие';
 }

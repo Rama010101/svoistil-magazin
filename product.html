@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Товар — СВОЙ СТИЛЬ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Шапка -->
+  <header class="header">
+    <div class="logo"><a href="index.html" style="color: #fff; text-decoration: none;">СВОЙ СТИЛЬ</a></div>
+    <nav class="nav">
+      <a href="index.html#catalog">Каталог</a>
+      <a href="index.html#contacts">Контакты</a>
+      <button id="cart-btn" class="cart-btn">
+        🛒 Корзина (<span id="cart-count">0</span>)
+      </button>
+    </nav>
+  </header>
+
+  <!-- Основной контент страницы товара -->
+  <main class="product-page">
+    <div class="product-page-container" id="product-details">
+      <!-- Сюда JS вставит информацию о товаре -->
+      <p>Загрузка...</p>
+    </div>
+  </main>
+
+  <!-- Модальное окно корзины (такое же, как на главной) -->
+  <div class="cart-modal" id="cart-modal">
+    <div class="cart-content">
+      <div class="cart-header">
+        <h2>Ваша корзина</h2>
+        <button id="close-cart" class="close-btn">&times;</button>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-footer">
+        <div class="cart-total">Итого: <span id="cart-total-price">0</span> ₽</div>
+        <button id="checkout-btn" class="checkout-btn">Оформить заказ</button>
+      </div>
+    </div>
+
+    <!-- Форма заказа (дублируем для работы с этой страницы) -->
+    <div id="checkout-form-container" class="checkout-form-container" style="display: none;">
+      <div class="cart-header">
+        <h2>Оформление заказа</h2>
+        <button id="close-form" class="close-btn">&times;</button>
+      </div>
+      <form id="checkout-form" class="checkout-form">
+        <div class="form-group">
+          <label for="name">Ваше имя *</label>
+          <input type="text" id="name" required placeholder="Иван Иванов">
+        </div>
+        <div class="form-group">
+          <label for="phone">Телефон *</label>
+          <input type="tel" id="phone" required placeholder="+7 (999) 123-45-67">
+        </div>
+        <div class="form-group">
+          <label for="address">Адрес доставки *</label>
+          <input type="text" id="address" required placeholder="г. Москва, ул. Ленина, д. 1">
+        </div>
+        <div class="form-group">
+          <label for="comment">Комментарий</label>
+          <textarea id="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Подтвердить заказ</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
