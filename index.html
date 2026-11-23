@@ -12,9 +12,12 @@
 <header class="header">
     <div class="logo">СВОЙ СТИЛЬ</div>
     <nav class="nav">
-      <a href="#catalog">Каталог</a>
-      <a href="#contacts">Контакты</a>
-      <!-- НОВОЕ: Кнопка корзины -->
+      <a href="index.html?cat=floor">Напольные покрытия</a>
+      <a href="index.html?cat=ceramics">Керамогранит</a>
+      <a href="index.html?cat=doors">Двери</a>
+      <a href="index.html?cat=plumbing">Сантехника</a>
+      <a href="index.html?cat=wallpaper">Обои</a>
+      <a href="index.html?cat=lighting">Освещение</a>
       <button id="cart-btn" class="cart-btn">
         🛒 Корзина (<span id="cart-count">0</span>)
       </button>
@@ -24,22 +27,21 @@
   <!-- Главный блок -->
   <main>
     <section class="hero">
-      <h1>Напольные покрытия для вашего дома</h1>
-      <p>Ламинат, кварцвинил, пробка и паркет — от лучших производителей.</p>
+      <h1>Всё для вашего дома и ремонта</h1>
+      <p>Напольные покрытия, двери, сантехника, керамогранит, обои и освещение — в одном месте.</p>
     </section>
 
     <!-- Каталог -->
     <section id="catalog" class="catalog">
       <h2>Наш каталог</h2>
+            <!-- Поиск -->
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="🔍 Поиск по названию...">
+      </div>
       
       <!-- Фильтры -->
-      <div class="filters">
-        <button class="filter-btn active" data-category="all">Все</button>
-        <button class="filter-btn" data-category="laminate">Ламинат</button>
-        <button class="filter-btn" data-category="vinyl">Кварцвинил</button>
-        <button class="filter-btn" data-category="cork">Пробка</button>
-        <button class="filter-btn" data-category="parquet">Паркет</button>
-      </div>
+            <!-- Фильтры будут добавляться через JS -->
+      <div class="filters" id="filters-container"></div>
 
       <!-- Сетка товаров -->
       <div class="products-grid" id="products-grid">

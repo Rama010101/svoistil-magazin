@@ -53,26 +53,85 @@ const products = [
     image: 'images/parquet-1.jpg',
     description: 'Натуральный дуб, 3-полосная доска. Премиум-класс для гостиной.',
     inStock: true
+  },
+    // Двери
+  {
+    id: 7,
+    name: 'Дверь межкомнатная «Модерн»',
+    category: 'doors',
+    price: 12500,
+    image: 'images/door-1.jpg',
+    description: 'Шпон дуба, стекло сатин, размер 80x200 см. Петли и ручка в комплекте.',
+    inStock: true
+  },
+  // Сантехника
+  {
+    id: 8,
+    name: 'Смеситель для кухни Grohe',
+    category: 'plumbing',
+    price: 8700,
+    image: 'images/faucet-1.jpg',
+    description: 'Хромированная сталь, поворотный излив, керамический картридж.',
+    inStock: true
+  },
+  // Керамогранит
+  {
+    id: 9,
+    name: 'Керамогранит Kerama Marazzi',
+    category: 'ceramics',
+    price: 1250,
+    image: 'images/tile-1.jpg',
+    description: 'Размер 60x60 см, матовый, под мрамор. Отличный выбор для пола.',
+    inStock: true
+  },
+  // Обои
+  {
+    id: 10,
+    name: 'Обои флизелиновые Grandeco',
+    category: 'wallpaper',
+    price: 3200,
+    image: 'images/wallpaper-1.jpg',
+    description: 'Рулон 1.06x10 м, светлые, с легким узором. Безопасны для детей.',
+    inStock: true
+  },
+  // Освещение
+  {
+    id: 11,
+    name: 'Люстра подвесная Loft',
+    category: 'lighting',
+    price: 4500,
+    image: 'images/light-1.jpg',
+    description: '5 ламп, металл + стекло, стиль лофт. Идеально для гостиной.',
+    inStock: true
   }
 ];
 
-// === Переменные для DOM ===
+// === Переменные ===
 const grid = document.getElementById('products-grid');
 const filterBtns = document.querySelectorAll('.filter-btn');
+const searchInput = document.getElementById('search-input');
 const cartBtn = document.getElementById('cart-btn');
 const cartModal = document.getElementById('cart-modal');
 const closeCartBtn = document.getElementById('close-cart');
 const cartItemsContainer = document.getElementById('cart-items');
 const cartCount = document.getElementById('cart-count');
 const cartTotalPrice = document.getElementById('cart-total-price');
+const productDetailsContainer = document.getElementById('product-details');
 
 let currentCategory = 'all';
+// Читаем категорию из адресной строки (например, index.html?cat=doors)
+const urlParams = new URLSearchParams(window.location.search);
+const urlCategory = urlParams.get('cat');
 
-// === Корзина (инициализация) ===
+// Если категория есть в адресе — активируем её
+if (urlCategory) {
+    currentCategory = urlCategory;
+}
+let searchQuery = '';
 let cart = JSON.parse(localStorage.getItem('myCart')) || [];
 
 // ==========================================
-// ЛОГИКА КОРЗИНЫ
+// КОРЗИНА
 // ==========================================
 
 function saveCart() {
@@ -84,7 +143,6 @@ function updateCartCounter() {
   if (cartCount) cartCount.textContent = totalItems;
 }
 
-// Функция добавления в корзину (вызывается из карточек)
 function addToCart(product) {
   const existingItem = cart.find(item => item.id === product.id);
   
@@ -102,12 +160,12 @@ function addToCart(product) {
   saveCart();
   updateCartCounter();
   
-  // Небольшая анимация или уведомление
-  cartBtn.style.transform = 'scale(1.1)';
-  setTimeout(() => cartBtn.style.transform = 'scale(1)', 200);
+  if (cartBtn) {
+    cartBtn.style.transform = 'scale(1.1)';
+    setTimeout(() => cartBtn.style.transform = 'scale(1)', 200);
+  }
 }
 
-// Рендер корзины внутри модального окна
 function renderCart() {
   if (!cartItemsContainer) return;
   cartItemsContainer.innerHTML = '';
@@ -143,7 +201,6 @@ function renderCart() {
   if (cartTotalPrice) cartTotalPrice.textContent = total.toLocaleString('ru-RU');
 }
 
-// Глобальные функции для onclick в HTML (корзина)
 window.changeQty = function(id, delta) {
   const item = cart.find(i => i.id === id);
   if (!item) return;
@@ -167,7 +224,7 @@ window.removeFromCart = function(id) {
   updateCartCounter();
 };
 
-// Обработчики событий корзины
+// Обработчики корзины
 if (cartBtn) {
   cartBtn.addEventListener('click', () => {
     renderCart();
@@ -190,7 +247,7 @@ if (cartModal) {
 }
 
 // ==========================================
-// РЕНДЕР КАТАЛОГА
+// РЕНДЕР КАТАЛОГА (С ПОИСКОМ)
 // ==========================================
 
 function renderProducts() {
@@ -198,11 +255,30 @@ function renderProducts() {
   grid.innerHTML = '';
 
   const filtered = products.filter(product => {
-    return currentCategory === 'all' || product.category === currentCategory;
+    let matchesCategory = false;
+    
+    // Если выбрана категория "Напольные покрытия" (ссылка cat=floor) 
+    // или мы просто нажали "Все" на главной
+    if (currentCategory === 'floor' || currentCategory === 'all') {
+       matchesCategory = ['laminate', 'vinyl', 'cork', 'parquet'].includes(product.category);
+       
+       // Если нажали "Все", но пришли не по ссылке floor, показываем вообще всё
+       if (currentCategory === 'all' && !urlCategory) matchesCategory = true;
+    } 
+    // Для остальных категорий (двери, сантехника и т.д.) просто сравниваем
+    else {
+       matchesCategory = product.category === currentCategory;
+    }
+
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
   });
 
   if (filtered.length === 0) {
-    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">В этой категории товаров пока нет.</p>';
+    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777; font-size: 18px; margin: 30px 0;">По вашему запросу ничего не найдено.</p>';
     return;
   }
 
@@ -224,17 +300,16 @@ function renderProducts() {
       </div>
     `;
 
-    // Вешаем обработчик на кнопку "В корзину"
     const btn = card.querySelector('.product-btn');
     if (btn && product.inStock) {
       btn.addEventListener('click', () => {
         addToCart(product);
       });
     }
-  // Делаем карточку кликабельной (переход на страницу товара)
+
+    // Переход на страницу товара
     card.style.cursor = 'pointer';
     card.addEventListener('click', (e) => {
-      // Если кликнули по кнопке "В корзину" — не переходим
       if (e.target.classList.contains('product-btn')) return;
       window.location.href = `product.html?id=${product.id}`;
     });
@@ -253,9 +328,14 @@ filterBtns.forEach(btn => {
   });
 });
 
-// === Запуск ===
-renderProducts();
-updateCartCounter();
+// === Поиск ===
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    renderProducts();
+  });
+}
+
 // ==========================================
 // ОФОРМЛЕНИЕ ЗАКАЗА (ФОРМА)
 // ==========================================
@@ -265,67 +345,44 @@ const checkoutFormContainer = document.getElementById('checkout-form-container')
 const closeFormBtn = document.getElementById('close-form');
 const checkoutForm = document.getElementById('checkout-form');
 
-// Показать форму при клике на "Оформить заказ"
 if (checkoutBtn) {
   checkoutBtn.addEventListener('click', () => {
-    // Проверяем, что корзина не пуста
     if (cart.length === 0) {
       alert('Корзина пуста! Добавьте товары перед оформлением.');
       return;
     }
-    // Скрываем корзину, показываем форму
     document.querySelector('.cart-content').style.display = 'none';
     checkoutFormContainer.style.display = 'block';
   });
 }
 
-// Закрыть форму и вернуться в корзину
 if (closeFormBtn) {
   closeFormBtn.addEventListener('click', () => {
     checkoutFormContainer.style.display = 'none';
     document.querySelector('.cart-content').style.display = 'block';
-    // Очищаем поля формы
     checkoutForm.reset();
   });
 }
 
-// Отправка формы
 if (checkoutForm) {
   checkoutForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Останавливаем перезагрузку страницы
+    e.preventDefault();
 
-    // Собираем данные
     const name = document.getElementById('name').value;
     const phone = document.getElementById('phone').value;
     const address = document.getElementById('address').value;
     const comment = document.getElementById('comment').value;
 
-    // Формируем текст заказа
-    let orderText = `📦 НОВЫЙ ЗАКАЗ!\n\n`;
-    orderText += `👤 Имя: ${name}\n`;
-    orderText += `📞 Телефон: ${phone}\n`;
-    orderText += `📍 Адрес: ${address}\n`;
-    if (comment) orderText += `💬 Комментарий: ${comment}\n`;
-    orderText += `\n🛒 Товары:\n`;
-
     let total = 0;
     cart.forEach(item => {
-      orderText += `- ${item.name} (${item.quantity} шт.) — ${item.price * item.quantity} ₽\n`;
       total += item.price * item.quantity;
     });
-    orderText += `\n💰 Итого: ${total.toLocaleString('ru-RU')} ₽`;
 
-    // Пока что просто выводим в консоль и показываем пользователю
-    console.log("=== НОВЫЙ ЗАКАЗ ===");
-    console.log(orderText);
-
-    // Очищаем корзину
     cart = [];
     saveCart();
     updateCartCounter();
     renderCart();
 
-    // Показываем сообщение об успехе
     checkoutFormContainer.innerHTML = `
       <div class="cart-header">
         <h2>Заказ оформлен!</h2>
@@ -338,29 +395,20 @@ if (checkoutForm) {
         <button onclick="document.getElementById('cart-modal').classList.remove('open')" class="submit-btn" style="margin-top: 15px;">Вернуться в магазин</button>
       </div>
     `;
-
-    // Для реального магазина здесь нужно отправить orderText на сервер или в Telegram
-    // alert("Заказ оформлен! (В реальности здесь будет отправка на сервер)");
   });
 }
+
 // ==========================================
 // СТРАНИЦА ТОВАРА (product.html)
 // ==========================================
-const productDetailsContainer = document.getElementById('product-details');
 
 if (productDetailsContainer) {
-  // Получаем ID товара из адресной строки (например, product.html?id=2)
   const urlParams = new URLSearchParams(window.location.search);
   const productId = parseInt(urlParams.get('id'));
-
-  // Ищем товар в массиве products по ID
   const product = products.find(p => p.id === productId);
 
   if (product) {
-    // Меняем заголовок страницы
     document.title = `${product.name} — СВОЙ СТИЛЬ`;
-
-    // Формируем HTML
     productDetailsContainer.innerHTML = `
       <div class="product-page-image">
         <img src="${product.image}" alt="${product.name}" onerror="this.src='https://placehold.co/400x300/e8dccb/8B5A2B?text=Фото'">
@@ -376,12 +424,10 @@ if (productDetailsContainer) {
       </div>
     `;
 
-    // Обработчик для кнопки "Добавить в корзину" на странице товара
     const addBtn = document.getElementById('add-to-cart-detail');
     if (addBtn && product.inStock) {
       addBtn.addEventListener('click', () => {
         addToCart(product);
-        // Небольшое уведомление, что добавлено
         addBtn.textContent = 'Добавлено! ✓';
         setTimeout(() => addBtn.textContent = 'Добавить в корзину', 1500);
       });
@@ -391,13 +437,79 @@ if (productDetailsContainer) {
   }
 }
 
-// Вспомогательная функция для красивого названия категории
 function getCategoryName(category) {
   const names = {
     'laminate': 'Ламинат',
     'vinyl': 'Кварцвинил',
     'cork': 'Пробка',
-    'parquet': 'Паркет'
+    'parquet': 'Паркет',
+    'doors': 'Двери',
+    'plumbing': 'Сантехника',
+    'ceramics': 'Керамогранит',
+    'wallpaper': 'Обои',
+    'lighting': 'Освещение'
   };
-  return names[category] || 'Напольное покрытие';
+  return names[category] || 'Товар';
 }
+// ==========================================
+// ЗАПУСК
+// ==========================================
+renderProducts();
+updateCartCounter();
+// ==========================================
+// ОТРИСОВКА ФИЛЬТРОВ
+// ==========================================
+function renderFilters() {
+  const container = document.getElementById('filters-container');
+  if (!container) return;
+
+  container.innerHTML = ''; // Очищаем
+
+  let buttons = [];
+
+  // В зависимости от того, какая категория в ссылке (urlCategory), показываем свои кнопки
+  if (urlCategory === 'doors') {
+    buttons = [{ label: 'Все двери', cat: 'doors' }];
+  } else if (urlCategory === 'plumbing') {
+    buttons = [{ label: 'Вся сантехника', cat: 'plumbing' }];
+  } else if (urlCategory === 'ceramics') {
+    buttons = [{ label: 'Весь керамогранит', cat: 'ceramics' }];
+  } else if (urlCategory === 'wallpaper') {
+    buttons = [{ label: 'Все обои', cat: 'wallpaper' }];
+  } else if (urlCategory === 'lighting') {
+    buttons = [{ label: 'Всё освещение', cat: 'lighting' }];
+  } else {
+    // По умолчанию (для "Напольных покрытий" или главной) показываем подкатегории покрытий
+    buttons = [
+      { label: 'Все', cat: 'all' },
+      { label: 'Ламинат', cat: 'laminate' },
+      { label: 'Кварцвинил', cat: 'vinyl' },
+      { label: 'Пробка', cat: 'cork' },
+      { label: 'Паркет', cat: 'parquet' }
+    ];
+  }
+
+  buttons.forEach((b, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    // Делаем первую кнопку активной по умолчанию
+    if (index === 0) btn.classList.add('active');
+    btn.textContent = b.label;
+    
+    btn.addEventListener('click', () => {
+      // Убираем active у всех
+      container.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
+      // Добавляем на нажатую
+      btn.classList.add('active');
+      // Меняем текущую категорию
+      currentCategory = b.cat;
+      // Перерисовываем каталог
+      renderProducts();
+    });
+    
+    container.appendChild(btn);
+  });
+}
+renderFilters(); // ← ДОБАВИТЬ ЭТУ СТРОКУ
+renderProducts();
+updateCartCounter();
