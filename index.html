@@ -61,7 +61,7 @@
     <p>© 2026 Магазин «СВОЙ СТИЛЬ». Все права защищены.</p>
   </footer>
 
-  <!-- НОВОЕ: Модальное окно корзины -->
+ <!-- Модальное окно корзины -->
   <div class="cart-modal" id="cart-modal">
     <div class="cart-content">
       <div class="cart-header">
@@ -75,8 +75,36 @@
         <div class="cart-total">
           Итого: <span id="cart-total-price">0</span> ₽
         </div>
-        <button class="checkout-btn">Оформить заказ</button>
+        <!-- Кнопка переключения на форму -->
+        <button id="checkout-btn" class="checkout-btn">Оформить заказ</button>
       </div>
+    </div>
+
+    <!-- НОВОЕ: Форма заказа (скрыта по умолчанию) -->
+    <div id="checkout-form-container" class="checkout-form-container" style="display: none;">
+      <div class="cart-header">
+        <h2>Оформление заказа</h2>
+        <button id="close-form" class="close-btn">&times;</button>
+      </div>
+      <form id="checkout-form" class="checkout-form">
+        <div class="form-group">
+          <label for="name">Ваше имя *</label>
+          <input type="text" id="name" required placeholder="Иван Иванов">
+        </div>
+        <div class="form-group">
+          <label for="phone">Телефон *</label>
+          <input type="tel" id="phone" required placeholder="+7 (999) 123-45-67">
+        </div>
+        <div class="form-group">
+          <label for="address">Адрес доставки *</label>
+          <input type="text" id="address" required placeholder="г. Москва, ул. Ленина, д. 1">
+        </div>
+        <div class="form-group">
+          <label for="comment">Комментарий</label>
+          <textarea id="comment" rows="3" placeholder="Пожелания по заказу..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Подтвердить заказ</button>
+      </form>
     </div>
   </div>
   <script src="script.js"></script>

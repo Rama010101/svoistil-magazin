@@ -249,3 +249,90 @@ filterBtns.forEach(btn => {
 // === Запуск ===
 renderProducts();
 updateCartCounter();
+// ==========================================
+// ОФОРМЛЕНИЕ ЗАКАЗА (ФОРМА)
+// ==========================================
+
+const checkoutBtn = document.getElementById('checkout-btn');
+const checkoutFormContainer = document.getElementById('checkout-form-container');
+const closeFormBtn = document.getElementById('close-form');
+const checkoutForm = document.getElementById('checkout-form');
+
+// Показать форму при клике на "Оформить заказ"
+if (checkoutBtn) {
+  checkoutBtn.addEventListener('click', () => {
+    // Проверяем, что корзина не пуста
+    if (cart.length === 0) {
+      alert('Корзина пуста! Добавьте товары перед оформлением.');
+      return;
+    }
+    // Скрываем корзину, показываем форму
+    document.querySelector('.cart-content').style.display = 'none';
+    checkoutFormContainer.style.display = 'block';
+  });
+}
+
+// Закрыть форму и вернуться в корзину
+if (closeFormBtn) {
+  closeFormBtn.addEventListener('click', () => {
+    checkoutFormContainer.style.display = 'none';
+    document.querySelector('.cart-content').style.display = 'block';
+    // Очищаем поля формы
+    checkoutForm.reset();
+  });
+}
+
+// Отправка формы
+if (checkoutForm) {
+  checkoutForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // Останавливаем перезагрузку страницы
+
+    // Собираем данные
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const address = document.getElementById('address').value;
+    const comment = document.getElementById('comment').value;
+
+    // Формируем текст заказа
+    let orderText = `📦 НОВЫЙ ЗАКАЗ!\n\n`;
+    orderText += `👤 Имя: ${name}\n`;
+    orderText += `📞 Телефон: ${phone}\n`;
+    orderText += `📍 Адрес: ${address}\n`;
+    if (comment) orderText += `💬 Комментарий: ${comment}\n`;
+    orderText += `\n🛒 Товары:\n`;
+
+    let total = 0;
+    cart.forEach(item => {
+      orderText += `- ${item.name} (${item.quantity} шт.) — ${item.price * item.quantity} ₽\n`;
+      total += item.price * item.quantity;
+    });
+    orderText += `\n💰 Итого: ${total.toLocaleString('ru-RU')} ₽`;
+
+    // Пока что просто выводим в консоль и показываем пользователю
+    console.log("=== НОВЫЙ ЗАКАЗ ===");
+    console.log(orderText);
+
+    // Очищаем корзину
+    cart = [];
+    saveCart();
+    updateCartCounter();
+    renderCart();
+
+    // Показываем сообщение об успехе
+    checkoutFormContainer.innerHTML = `
+      <div class="cart-header">
+        <h2>Заказ оформлен!</h2>
+        <button class="close-btn" onclick="document.getElementById('cart-modal').classList.remove('open')">&times;</button>
+      </div>
+      <div class="success-message" style="display: block;">
+        <h3>Спасибо, ${name}!</h3>
+        <p>Ваш заказ на сумму <b>${total.toLocaleString('ru-RU')} ₽</b> принят.</p>
+        <p>Мы свяжемся с вами по номеру <b>${phone}</b> для подтверждения.</p>
+        <button onclick="document.getElementById('cart-modal').classList.remove('open')" class="submit-btn" style="margin-top: 15px;">Вернуться в магазин</button>
+      </div>
+    `;
+
+    // Для реального магазина здесь нужно отправить orderText на сервер или в Telegram
+    // alert("Заказ оформлен! (В реальности здесь будет отправка на сервер)");
+  });
+}
