@@ -8,48 +8,47 @@
 </head>
 <body>
 
-  <!-- Шапка -->
-<header class="header">
-    <div class="logo">СВОЙ СТИЛЬ</div>
+  <header class="header">
+    <div class="logo">
+      <a href="index.html"><img src="images/logo.png" alt="СВОЙ СТИЛЬ" class="logo-img"></a>
+    </div>
+    <button class="burger-menu" id="burger-btn">☰</button>
     <nav class="nav">
       <a href="index.html?cat=floor">Напольные покрытия</a>
-      <a href="index.html?cat=ceramics">Керамогранит</a>
       <a href="index.html?cat=doors">Двери</a>
       <a href="index.html?cat=plumbing">Сантехника</a>
+      <a href="index.html?cat=ceramics">Керамогранит</a>
       <a href="index.html?cat=wallpaper">Обои</a>
       <a href="index.html?cat=lighting">Освещение</a>
+      <button id="fav-btn" class="cart-btn" style="margin-right: 10px;">
+        ❤️ Избранное (<span id="fav-count">0</span>)
+      </button>
       <button id="cart-btn" class="cart-btn">
         🛒 Корзина (<span id="cart-count">0</span>)
       </button>
     </nav>
   </header>
 
-  <!-- Главный блок -->
   <main>
     <section class="hero">
       <h1>Всё для вашего дома и ремонта</h1>
       <p>Напольные покрытия, двери, сантехника, керамогранит, обои и освещение — в одном месте.</p>
     </section>
 
-    <!-- Каталог -->
     <section id="catalog" class="catalog">
       <h2>Наш каталог</h2>
-            <!-- Поиск -->
+      
       <div class="search-container">
         <input type="text" id="search-input" placeholder="🔍 Поиск по названию...">
       </div>
-      
-      <!-- Фильтры -->
-            <!-- Фильтры будут добавляться через JS -->
+
+      <!-- Фильтры будут добавляться через JS -->
       <div class="filters" id="filters-container"></div>
 
       <!-- Сетка товаров -->
-      <div class="products-grid" id="products-grid">
-        <!-- Карточки будут добавляться через JS -->
-      </div>
+      <div class="products-grid" id="products-grid"></div>
     </section>
 
-    <!-- Контакты -->
     <section id="contacts" class="contacts">
       <h2>Наши контакты</h2>
       <p>📞 Телефон: +7 (XXX) XXX-XX-XX</p>
@@ -58,31 +57,25 @@
     </section>
   </main>
 
-  <!-- Футер -->
   <footer class="footer">
     <p>© 2026 Магазин «СВОЙ СТИЛЬ». Все права защищены.</p>
   </footer>
 
- <!-- Модальное окно корзины -->
+  <!-- Модальное окно корзины -->
   <div class="cart-modal" id="cart-modal">
     <div class="cart-content">
       <div class="cart-header">
         <h2>Ваша корзина</h2>
         <button id="close-cart" class="close-btn">&times;</button>
       </div>
-      <div id="cart-items" class="cart-items">
-        <!-- Товары будут здесь -->
-      </div>
+      <div id="cart-items" class="cart-items"></div>
       <div class="cart-footer">
-        <div class="cart-total">
-          Итого: <span id="cart-total-price">0</span> ₽
-        </div>
-        <!-- Кнопка переключения на форму -->
+        <div class="cart-total">Итого: <span id="cart-total-price">0</span> ₽</div>
         <button id="checkout-btn" class="checkout-btn">Оформить заказ</button>
       </div>
     </div>
 
-    <!-- НОВОЕ: Форма заказа (скрыта по умолчанию) -->
+    <!-- Форма заказа -->
     <div id="checkout-form-container" class="checkout-form-container" style="display: none;">
       <div class="cart-header">
         <h2>Оформление заказа</h2>
@@ -103,12 +96,24 @@
         </div>
         <div class="form-group">
           <label for="comment">Комментарий</label>
-          <textarea id="comment" rows="3" placeholder="Пожелания по заказу..."></textarea>
+          <textarea id="comment" rows="3"></textarea>
         </div>
         <button type="submit" class="submit-btn">Подтвердить заказ</button>
       </form>
     </div>
   </div>
+
+  <!-- Модальное окно избранного -->
+  <div class="fav-modal" id="fav-modal">
+    <div class="fav-content">
+      <div class="cart-header">
+        <h2>Избранное</h2>
+        <button id="close-fav" class="close-btn">&times;</button>
+      </div>
+      <div id="fav-items" class="fav-items"></div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
