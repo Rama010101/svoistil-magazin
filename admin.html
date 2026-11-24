@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель — СВОЙ СТИЛЬ</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Немного стилей только для админки */
+    .admin-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .admin-container h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: var(--primary-dark);
+      text-align: center;
+    }
+    .admin-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .admin-form label {
+      font-weight: 600;
+      font-size: 14px;
+      color: #555;
+    }
+    .admin-form input, .admin-form select, .admin-form textarea {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
+    .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus {
+      border-color: var(--primary);
+    }
+    .admin-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .admin-btn:hover {
+      background: var(--primary-dark);
+    }
+    .admin-list {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+    .admin-list-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+    .admin-list-item span {
+      font-size: 14px;
+    }
+    .admin-delete-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body style="background: #f4f6f8; padding: 20px;">
+
+  <div class="admin-container">
+    <h1>Добавление товара</h1>
+    <a href="index.html" style="display: block; text-align: center; margin-bottom: 20px; color: var(--primary); text-decoration: none;">← Вернуться в магазин</a>
+    
+    <form id="add-product-form" class="admin-form">
+      <div>
+        <label>Название товара</label>
+        <input type="text" id="p-name" required placeholder="Например: Ламинат Дуб Натуральный">
+      </div>
+      <div>
+        <label>Категория</label>
+        <select id="p-category" required>
+          <option value="laminate">Ламинат</option>
+          <option value="vinyl">Кварцвинил</option>
+          <option value="cork">Пробка</option>
+          <option value="parquet">Паркет</option>
+          <option value="doors">Двери</option>
+          <option value="plumbing">Сантехника</option>
+          <option value="ceramics">Керамогранит</option>
+          <option value="wallpaper">Обои</option>
+          <option value="lighting">Освещение</option>
+        </select>
+      </div>
+      <div>
+        <label>Цена (₽)</label>
+        <input type="number" id="p-price" required placeholder="1890">
+      </div>
+      <div>
+        <label>Имя файла фото (из папки images)</label>
+        <input type="text" id="p-image" placeholder="Например: laminate-3.jpg" required>
+      </div>
+      <div>
+        <label>Описание</label>
+        <textarea id="p-desc" rows="3" placeholder="Короткое описание..." required></textarea>
+      </div>
+      <div>
+        <label>В наличии?</label>
+        <select id="p-stock">
+          <option value="true">Да, в наличии</option>
+          <option value="false">Нет в наличии</option>
+        </select>
+      </div>
+      <button type="submit" class="admin-btn">Добавить товар</button>
+    </form>
+
+    <div class="admin-list">
+      <h3>Добавленные товары (в памяти браузера)</h3>
+      <div id="admin-products-list"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // === ЛОГИКА АДМИН-ПАНЕЛИ ===
+    const form = document.getElementById('add-product-form');
+    const list = document.getElementById('admin-products-list');
+
+    // Получаем товары из localStorage (если есть)
+    let customProducts = JSON.parse(localStorage.getItem('myCustomProducts')) || [];
+
+    // Отрисовка списка добавленных товаров
+    function renderAdminList() {
+      if (!list) return;
+      list.innerHTML = '';
+      if (customProducts.length === 0) {
+        list.innerHTML = '<p style="font-size:14px; color:#777;">Пока нет добавленных товаров.</p>';
+        return;
+      }
+      customProducts.forEach((p, index) => {
+        const div = document.createElement('div');
+        div.className = 'admin-list-item';
+        div.innerHTML = `
+          <span><b>${p.name}</b> (${p.price} ₽) — ${p.category}</span>
+          <button class="admin-delete-btn" onclick="deleteProduct(${index})">Удалить</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    // Добавление товара
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newProduct = {
+          id: Date.now(), // Уникальный ID на основе времени
+          name: document.getElementById('p-name').value,
+          category: document.getElementById('p-category').value,
+          price: parseInt(document.getElementById('p-price').value),
+          image: 'images/' + document.getElementById('p-image').value,
+          description: document.getElementById('p-desc').value,
+          inStock: document.getElementById('p-stock').value === 'true'
+        };
+
+        customProducts.push(newProduct);
+        localStorage.setItem('myCustomProducts', JSON.stringify(customProducts));
+        
+        form.reset();
+        renderAdminList();
+        alert('Товар успешно добавлен! Он появится в магазине.');
+      });
+    }
+
+    // Удаление товара
+    window.deleteProduct = function(index) {
+      customProducts.splice(index, 1);
+      localStorage.setItem('myCustomProducts', JSON.stringify(customProducts));
+      renderAdminList();
+    };
+
+    // Запуск
+    renderAdminList();
+  </script>
+</body>
+</html>
